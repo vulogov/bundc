@@ -46,7 +46,7 @@ pub fn main() {
         build::COMMIT_HASH,
         build::BUILD_TIME
     );
-    log::debug!("BUNDCORE version: {}", bundcore::version());
+    log::debug!("BUND version: {}", bund_language_parser::version());
     log::debug!("Initialize global CLI");
     drop(init_cli);
     log::debug!("BUNDC context initialized ...");

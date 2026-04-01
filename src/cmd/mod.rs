@@ -10,6 +10,7 @@ use std::env;
 use std::sync::Mutex;
 use time_graph;
 
+pub mod bundc_compile;
 pub mod bundc_display_banner;
 pub mod bundc_version;
 
@@ -59,6 +60,9 @@ pub fn main() {
         Commands::Version(_) => {
             bundc_version::run(&cli);
         }
+        Commands::Compile(cargs) => {
+            bundc_compile::run(&cli, &cargs);
+        }
     }
 
     if cli.profile {
@@ -71,6 +75,7 @@ pub fn main() {
 #[derive(Subcommand, Clone, Debug)]
 enum Commands {
     Version(Version),
+    Compile(Compile),
 }
 
 #[derive(Parser, Clone, Debug)]
@@ -96,6 +101,10 @@ pub struct Cli {
     #[clap(subcommand, help = "BUNDC subcommands")]
     command: Commands,
 }
+
+#[derive(Args, Clone, Debug)]
+#[clap(about = "Compile BUND to bytecode")]
+pub struct Compile {}
 
 #[derive(Args, Clone, Debug)]
 #[clap(about = "Get the version of the BUNDC")]

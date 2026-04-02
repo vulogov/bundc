@@ -10,7 +10,9 @@ use std::env;
 use std::sync::Mutex;
 use time_graph;
 
+pub mod bundc_assemble;
 pub mod bundc_compile;
+pub mod bundc_disassemble;
 pub mod bundc_display_banner;
 pub mod bundc_version;
 pub mod common;
@@ -64,6 +66,12 @@ pub fn main() {
         Commands::Compile(cargs) => {
             bundc_compile::run(&cli, &cargs);
         }
+        Commands::Assemble(aargs) => {
+            bundc_assemble::run(&cli, &aargs);
+        }
+        Commands::Disassemble(dargs) => {
+            bundc_disassemble::run(&cli, &dargs);
+        }
     }
 
     if cli.profile {
@@ -77,6 +85,8 @@ pub fn main() {
 enum Commands {
     Version(Version),
     Compile(Compile),
+    Assemble(Assemble),
+    Disassemble(Disassemble),
 }
 
 #[derive(Parser, Clone, Debug)]
@@ -113,6 +123,33 @@ pub struct Compile {
     pub out: Option<String>,
 
     #[clap(help = "Full path to the source code", short, long, required = true)]
+    pub src: Option<String>,
+}
+
+#[derive(Args, Clone, Debug)]
+#[clap(about = "Assemble bytecode into container")]
+pub struct Assemble {
+    #[clap(help = "Full path to the binary container", short, long)]
+    pub out: Option<String>,
+
+    #[clap(
+        help = "Full path to the compiled bytecode",
+        short,
+        long,
+        required = true
+    )]
+    pub src: Option<String>,
+}
+
+#[derive(Args, Clone, Debug)]
+#[clap(about = "Disassemble bytecode")]
+pub struct Disassemble {
+    #[clap(
+        help = "Full path to the compiled bytecode",
+        short,
+        long,
+        required = true
+    )]
     pub src: Option<String>,
 }
 

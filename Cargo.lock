@@ -178,6 +178,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5d20789868f4b01b2f2caec9f5c4e0213b41e3e5702a50157d699ae31ced2fcb"
 
 [[package]]
+name = "bund_blobstore"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad0787ee6e5b2b51032358b4439f0fd8c322c8a8072e26e7d503b0cee7ce29d0"
+dependencies = [
+ "bincode",
+ "easy-error",
+ "env_logger",
+ "log",
+ "redb",
+ "rust_dynamic",
+ "tempfile",
+]
+
+[[package]]
 name = "bund_language_parser"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -197,6 +212,7 @@ version = "0.1.0"
 dependencies = [
  "better-panic",
  "bincode",
+ "bund_blobstore",
  "bund_language_parser",
  "cfonts",
  "clap",

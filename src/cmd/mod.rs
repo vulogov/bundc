@@ -139,6 +139,25 @@ pub struct Assemble {
         required = true
     )]
     pub src: Option<String>,
+
+    #[clap(help = "Name of the module", short, long, required = true)]
+    pub name: Option<String>,
+
+    #[clap(flatten)]
+    pub cmd: AssembleCmdGroup,
+}
+
+#[derive(Debug, Clone, clap::Args)]
+#[group(required = true, multiple = false)]
+pub struct AssembleCmdGroup {
+    #[clap(long, action = clap::ArgAction::SetTrue, help="Add compiled bytecode to container")]
+    pub add: bool,
+
+    #[clap(long, action = clap::ArgAction::SetTrue, help="Remove compiled bytecode from container")]
+    pub del: bool,
+
+    #[clap(long, action = clap::ArgAction::SetTrue, help="List content of the container")]
+    pub list: bool,
 }
 
 #[derive(Args, Clone, Debug)]
@@ -151,6 +170,19 @@ pub struct Disassemble {
         required = true
     )]
     pub src: Option<String>,
+
+    #[clap(flatten)]
+    pub cmd: DisassembleCmdGroup,
+}
+
+#[derive(Debug, Clone, clap::Args)]
+#[group(required = true, multiple = false)]
+pub struct DisassembleCmdGroup {
+    #[clap(long, action = clap::ArgAction::SetTrue, help="Extract bytecode  container")]
+    pub extract: bool,
+
+    #[clap(long, action = clap::ArgAction::SetTrue, help="Dump internal representation of bytecode from container")]
+    pub dump: bool,
 }
 
 #[derive(Args, Clone, Debug)]

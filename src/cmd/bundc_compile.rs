@@ -1,9 +1,45 @@
 extern crate log;
 use crate::cmd::{Cli, Compile, common};
-use bund_language_parser::compile;
 use comfy_table::modifiers::UTF8_ROUND_CORNERS;
 use comfy_table::presets::UTF8_FULL;
 use comfy_table::*;
+use easy_error::{Error, bail};
+use rust_dynamic::value::Value;
+
+fn bund_vec_to_list(state: &mut Vec<Value>) -> Result<Value, Error> {
+    let mut res = Value::list();
+    for e in state.iter() {
+        res = res.push(e.clone());
+    }
+    Ok(res)
+}
+
+fn bundc_compile<N: AsRef<str> + ToString>(source: N, cargs: &Compile) -> Result<Value, Error> {
+    match bund_language_parser::bund_parse(&source.to_string()) {
+        Ok(mut tokens) => {
+            if cargs.skip_last_exit {
+                log::debug!("Removing last EXIT");
+                common::remove_if_matches(&mut tokens, |x: &rust_dynamic::value::Value| x.dt == 93);
+            }
+            bund_vec_to_list(&mut tokens)
+        }
+        Err(err) => {
+            bail!("Error compiling BUND code: {}", err)
+        }
+    }
+}
+
+fn bundc_compile_to_binary<N: AsRef<str> + ToString>(
+    source: N,
+    cargs: &Compile,
+) -> Result<Vec<u8>, Error> {
+    match bundc_compile(source, cargs) {
+        Ok(the_list) => the_list.to_binary(),
+        Err(err) => {
+            bail!("{}", err)
+        }
+    }
+}
 
 fn bundc_compile_to_file(cargs: &Compile) {
     let out = match &cargs.out {
@@ -26,7 +62,7 @@ fn bundc_compile_to_file(cargs: &Compile) {
     };
     log::debug!("Reading from: {}, {} bytes", &src, &script.len());
     log::debug!("Writing to: {}", &out);
-    let output = match compile::compile_to_binary(script) {
+    let output = match bundc_compile_to_binary(script, cargs) {
         Ok(output) => output,
         Err(err) => {
             log::error!("BUND error: {}", err);
@@ -55,13 +91,17 @@ fn bundc_dump(cargs: &Compile) {
         }
     };
     log::debug!("Reading from: {}, {} bytes", &src, &script.len());
-    let output = match bund_language_parser::bund_parse(&script) {
+    let mut output = match bund_language_parser::bund_parse(&script) {
         Ok(output) => output,
         Err(err) => {
             log::error!("BUND error: {}", err);
             return;
         }
     };
+    if cargs.skip_last_exit {
+        log::debug!("Removing last EXIT");
+        common::remove_if_matches(&mut output, |x: &rust_dynamic::value::Value| x.dt == 93);
+    }
     let mut table = Table::new();
     table
         .load_preset(UTF8_FULL)

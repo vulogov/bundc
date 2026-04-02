@@ -14,3 +14,15 @@ pub fn write_file(file_path: &str, data: Vec<u8>) -> Result<(), Error> {
         Err(err) => bail!("{}", err),
     }
 }
+
+pub fn remove_if_matches<T, F>(vec: &mut Vec<T>, condition: F)
+where
+    F: FnOnce(&T) -> bool,
+{
+    // Check if there is a last element and if it meets the condition
+    if let Some(last_val) = vec.last() {
+        if condition(last_val) {
+            vec.pop(); // Removes the last element
+        }
+    }
+}

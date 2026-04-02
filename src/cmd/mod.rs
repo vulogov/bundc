@@ -106,6 +106,9 @@ pub struct Compile {
     #[clap(long, action = clap::ArgAction::SetTrue, help="Dump internal represrentation of bytecode to STDOUT")]
     pub dump: bool,
 
+    #[clap(long, action = clap::ArgAction::SetTrue, help="Remove last EXIT")]
+    pub skip_last_exit: bool,
+
     #[clap(help = "Full path to the compiled binary", short, long)]
     pub out: Option<String>,
 

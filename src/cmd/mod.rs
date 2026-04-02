@@ -103,6 +103,9 @@ pub struct Cli {
 #[derive(Args, Clone, Debug)]
 #[clap(about = "Compile BUND to bytecode")]
 pub struct Compile {
+    #[clap(long, action = clap::ArgAction::SetTrue, help="Dump internal represrentation of bytecode to STDOUT")]
+    pub dump: bool,
+
     #[clap(help = "Full path to the compiled binary", short, long)]
     pub out: Option<String>,
 

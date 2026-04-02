@@ -13,6 +13,7 @@ use time_graph;
 pub mod bundc_compile;
 pub mod bundc_display_banner;
 pub mod bundc_version;
+pub mod common;
 
 lazy_static! {
     pub static ref CLI: Mutex<Cli> = {
@@ -92,11 +93,8 @@ pub struct Cli {
     #[arg(short, long, action = clap::ArgAction::Count)]
     debug: u8,
 
-    #[clap(long, action = clap::ArgAction::SetTrue, help="Execute internal profiler")]
+    #[clap(short, long, action = clap::ArgAction::SetTrue, help="Execute internal profiler")]
     pub profile: bool,
-
-    #[clap(help = "Full path to the output file", long)]
-    pub output: Option<String>,
 
     #[clap(subcommand, help = "BUNDC subcommands")]
     command: Commands,
@@ -104,7 +102,13 @@ pub struct Cli {
 
 #[derive(Args, Clone, Debug)]
 #[clap(about = "Compile BUND to bytecode")]
-pub struct Compile {}
+pub struct Compile {
+    #[clap(help = "Full path to the compiled binary", short, long)]
+    pub out: Option<String>,
+
+    #[clap(help = "Full path to the source code", short, long, required = true)]
+    pub src: Option<String>,
+}
 
 #[derive(Args, Clone, Debug)]
 #[clap(about = "Get the version of the BUNDC")]
